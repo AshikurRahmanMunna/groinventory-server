@@ -7,8 +7,6 @@ const app = express();
 app.use(express.json())
 app.use(cors());
 
-// GroInventory
-// 1W81oie5MohmnHgE
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -17,8 +15,18 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const productCollection = client.db('GroInventory').collection('products');
+        const itemsCollection = client.db('GroInventory').collection('items');
         console.log('Database connected');
+        app.get('/items', async (req, res) => {
+            const cursor = itemsCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        app.post('/items', async (req, res) => {
+            const item = req.body;
+            const result = await itemsCollection.insertOne(item);
+            res.send(result);
+        })
     }
     finally {
         // await client.close()
