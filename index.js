@@ -7,6 +7,25 @@ const app = express();
 app.use(express.json())
 app.use(cors());
 
+// GroInventory
+// 1W81oie5MohmnHgE
+
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://GroInventory:<password>@cluster0.d5bm4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+async function run() {
+    try {
+        await client.connect();
+        const productCollection = client.db('GroInventory').collection('products');
+        console.log('Database connected');
+    }
+    finally {
+        // await client.close()
+    }
+}
+
+run().catch(console.dir);
 
 const port  = process.env.PORT || 5000;
 app.get('/', (req, res) => {
