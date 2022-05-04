@@ -24,6 +24,31 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+        // get item by id
+        app.get('/item/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await itemsCollection.findOne({_id: ObjectId(id)});
+            res.send(result);
+        })
+        // get item by user(email)
+        app.get('/itemsByEmail', async(req, res) => {
+            const email = req.query.email;
+            const cursor = itemsCollection.find({email: email});
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        // update an item
+        app.put('/item/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert: true};
+            const updateBody = req.body;
+            const updateDoc = {
+                $set : updateBody
+            }
+            const result = await itemsCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
         // add an item
         app.post('/items', async (req, res) => {
             const item = req.body;
@@ -31,7 +56,7 @@ async function run() {
             res.send(result);
         })
         // delete an item
-        app.delete('/item/:id', async (req, res) => {
+        app.delete('/items/:id', async (req, res) => {
             const id = req.params.id;
             const filter = {_id: ObjectId(id)};
             const result = await itemsCollection.deleteOne(filter);
