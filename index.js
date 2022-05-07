@@ -17,6 +17,7 @@ async function run() {
         await client.connect();
         const itemsCollection = client.db('GroInventory').collection('items');
         const reviewsCollection = client.db('GroInventory').collection('reviews');
+        const newsCollection = client.db('GroInventory').collection('news');
         console.log('Database connected');
         // get all items
         app.get('/items', async (req, res) => {
@@ -69,10 +70,35 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+        // get reviews by email
+        app.get('/review', async(req, res) => {
+            const email = req.query.email;
+            const cursor = reviewsCollection.find({email: email});
+            const result = await cursor.toArray();
+            res.send(result);
+        });
         // add a review
         app.post('/reviews', async (req, res) => {
             const review = req.body;
             const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        })
+
+        // get all news
+        app.get('/news', async(req, res) => {
+            const cursor = newsCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+        app.get('/newsDetails/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await newsCollection.findOne({_id: ObjectId(id)});
+            res.send(result);
+        })
+        // post a news
+        app.post('/news', async(req, res) => {
+            const news = req.body;
+            const result = await newsCollection.insertOne(news);
             res.send(result);
         })
     }
