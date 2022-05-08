@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const app = express();
 
 // middleware
@@ -30,6 +31,14 @@ async function run() {
             const id = req.params.id;
             const result = await itemsCollection.findOne({_id: ObjectId(id)});
             res.send(result);
+        })
+        // send token to user
+        app.post('/user', async(req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d'
+            })
+            res.send({accessToken});
         })
         // get item by user(email)
         app.get('/itemsByEmail', async(req, res) => {
