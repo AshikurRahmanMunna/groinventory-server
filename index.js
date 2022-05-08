@@ -17,10 +17,11 @@ const verifyJWT = (req, res, next) => {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
         res.status(403).send({ message: "Forbidden Access" });
+      } else {
+        req.decoded = decoded;
+        next();
       }
-      req.decoded = decoded;
     });
-    next();
   }
 };
 
@@ -66,9 +67,8 @@ async function run() {
         const cursor = itemsCollection.find({ email: email });
         const result = await cursor.toArray();
         res.send(result);
-      }
-      else {
-        res.status(403).send({message: 'Forbidden Access'})
+      } else {
+        res.status(403).send({ message: "Forbidden Access" });
       }
     });
     // update an item
